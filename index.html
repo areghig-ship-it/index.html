@@ -1,172 +1,189 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday Judy</title>
-
+    <title>إلى أعز صديقة - جودي</title>
     <style>
-        body {
+        :root {
+            --primary-color: #ff3385; /* اللون الوردي المفضل في الفيديو */
+            --bg-color: #050505;
+        }
+
+        body, html {
             margin: 0;
-            background: #000;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            direction: rtl;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
             color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
         }
 
-        .screen {
+        /* تأثير الخلفية المتساقطة */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* المحتوى الأساسي */
+        .content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
             text-align: center;
+            background: rgba(0, 0, 0, 0.4);
         }
 
-        .binary {
-            font-size: 90px;
+        /* النصوص المتحركة */
+        #dynamic-text {
+            font-size: 4rem;
             font-weight: bold;
-            color: red;
-            text-shadow: 0 0 20px red;
-            letter-spacing: 5px;
+            color: var(--primary-color);
+            text-shadow: 0 0 15px var(--primary-color);
+            margin-bottom: 20px;
+            min-height: 100px;
         }
 
-        #heart {
-            display: none;
-            font-size: 110px;
-            color: red;
-            text-shadow: 0 0 25px red;
-            animation: pulse 1s infinite;
+        /* الرسالة الخاصة */
+        .letter-container {
+            background: rgba(255, 51, 133, 0.1);
+            border: 1px solid var(--primary-color);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 80%;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 51, 133, 0.2);
+            animation: fadeIn 3s ease-in;
+            margin-top: 20px;
+        }
+
+        .letter-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .letter-container p {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #eee;
+        }
+
+        .heart {
+            color: var(--primary-color);
+            font-size: 3rem;
+            animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.2); }
             100% { transform: scale(1); }
         }
 
-        #main {
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            max-width: 600px;
-            text-align: center;
-            z-index: 10;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        h1 {
-            color: #4da6ff;
-            font-size: 35px;
-            margin-bottom: 10px;
-        }
-
-        #countdown {
-            margin-top: 20px;
-            font-size: 22px;
-            color: #ff4d88;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid #333;
-        }
-
-        small {
-            color: #aaa;
-            font-size: 20px;
-        }
-
-        .matrix {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            opacity: 0.15;
-            font-size: 18px;
-            color: red;
-            overflow: hidden;
-            white-space: nowrap;
+        /* زر لتشغيل الموسيقى (اختياري) */
+        #play-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 100;
         }
     </style>
 </head>
-
 <body>
 
-    <div class="matrix" id="matrix"></div>
+    <canvas id="matrix"></canvas>
 
-    <div class="screen" id="intro">
-        <div class="binary" id="num">3</div>
-        <div id="heart">❤</div>
-    </div>
+    <div class="content">
+        <div class="heart">❤</div>
+        <div id="dynamic-text">3...</div>
 
-    <div class="screen" id="main">
-        <h1>🎂 عيد ميلاد سعيد جودي 🎂</h1>
-        <p>كل سنة وأنتِ أجمل صديقة 💙✨</p>
-        <small>28 / 04 / 2011</small>
-        <div id="countdown">جاري حساب الوقت...</div>
+        <div class="letter-container" id="letter" style="display: none;">
+            <h2>إلى صديقتي المفضلة جودي ✨</h2>
+            <p>
+                جودي، أردت أن أقدم لكِ شيئاً مختلفاً اليوم.. <br>
+                أنتِ لستِ مجرد صديقة، بل أنتِ الأخت التي لم تلدها أمي. <br>
+                شكراً لأنكِ دائماً هنا، وشكراً لكونكِ الشخص الذي يجعل كل شيء أجمل بوجوده. <br>
+                أتمنى أن تبقى ضحكتكِ تملأ المكان، وأن نحتفل بكل نجاحاتنا معاً دائماً.
+            </p>
+            <div style="margin-top: 15px; font-weight: bold; color: var(--primary-color);">
+                كل عام وأنتِ الأقرب لقلبي 🌸
+            </div>
+        </div>
     </div>
 
     <script>
-        window.onload = function() {
-            // 1. تأثير الخلفية (Matrix)
-            const matrixContainer = document.getElementById("matrix");
-            let rows = "";
-            for (let i = 0; i < 50; i++) {
-                rows += Math.random().toString(2).substring(2, 15) + "<br>";
-            }
-            matrixContainer.innerHTML = rows;
+        // إعداد خلفية Matrix الوردي
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
 
-            // 2. العد التنازلي التمهيدي (3, 2, 1)
-            let nums = ["3", "2", "1"];
-            let i = 0;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-            function showIntro() {
-                if (i < nums.length) {
-                    document.getElementById("num").innerText = nums[i];
-                    i++;
-                    setTimeout(showIntro, 1000);
-                } else {
-                    document.getElementById("num").style.display = "none";
-                    document.getElementById("heart").style.display = "block";
+        const alphabet = "JUDYجودي❤✨🌸01";
+        const fontSize = 18;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
 
-                    setTimeout(() => {
-                        document.getElementById("intro").style.display = "none";
-                        const mainScreen = document.getElementById("main");
-                        mainScreen.style.display = "flex";
-                        startBirthdayCountdown();
-                    }, 1500);
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#ff3385"; 
+            ctx.font = fontSize + "px Arial";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
                 }
+                drops[i]++;
             }
+        }
 
-            showIntro();
+        // التحكم بالنصوص والرسالة
+        const words = ["3", "2", "1", "مستعدة؟", "يا هلا بـ جودي", "أفضل صديقة", "❤"];
+        let wordIndex = 0;
+        const textElement = document.getElementById('dynamic-text');
+        const letterElement = document.getElementById('letter');
 
-            // 3. وظيفة حساب الوقت المتبقي لعيد الميلاد القادم
-            function startBirthdayCountdown() {
-                const targetDate = new Date("April 28, 2026 00:00:00").getTime();
-
-                setInterval(function() {
-                    const now = new Date().getTime();
-                    const distance = targetDate - now;
-
-                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                    if (distance < 0) {
-                        document.getElementById("countdown").innerHTML = "إنه يوم ميلادك اليوم! 🎉";
-                    } else {
-                        document.getElementById("countdown").innerHTML = 
-                            `باقي على يوم ميلادك: <br> ${days} يوم و ${hours} ساعة و ${minutes} دقيقة و ${seconds} ثانية`;
-                    }
-                }, 1000);
+        const timer = setInterval(() => {
+            if (wordIndex < words.length) {
+                textElement.innerText = words[wordIndex];
+                wordIndex++;
+            } else {
+                clearInterval(timer);
+                textElement.style.display = 'none';
+                letterElement.style.display = 'block';
             }
-        };
+        }, 1500);
+
+        setInterval(drawMatrix, 40);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     </script>
-
 </body>
 </html>
-
