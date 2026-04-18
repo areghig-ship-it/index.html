@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Judy</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            direction: rtl;
+            color: white;
+        }
+
+        .screen {
+            text-align: center;
+        }
+
+        .binary {
+            font-size: 90px;
+            font-weight: bold;
+            color: red;
+            text-shadow: 0 0 20px red;
+            letter-spacing: 5px;
+        }
+
+        #heart {
+            display: none;
+            font-size: 110px;
+            color: red;
+            text-shadow: 0 0 25px red;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        #main {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            max-width: 600px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #4da6ff;
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+
+        #countdown {
+            margin-top: 20px;
+            font-size: 22px;
+            color: #ff4d88;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid #333;
+        }
+
+        small {
+            color: #aaa;
+            font-size: 20px;
+        }
+
+        .matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.15;
+            font-size: 18px;
+            color: red;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="matrix" id="matrix"></div>
+
+    <div class="screen" id="intro">
+        <div class="binary" id="num">3</div>
+        <div id="heart">❤</div>
+    </div>
+
+    <div class="screen" id="main">
+        <h1>🎂 عيد ميلاد سعيد جودي 🎂</h1>
+        <p>كل سنة وأنتِ أجمل صديقة 💙✨</p>
+        <small>28 / 04 / 2011</small>
+        <div id="countdown">جاري حساب الوقت...</div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            // 1. تأثير الخلفية (Matrix)
+            const matrixContainer = document.getElementById("matrix");
+            let rows = "";
+            for (let i = 0; i < 50; i++) {
+                rows += Math.random().toString(2).substring(2, 15) + "<br>";
+            }
+            matrixContainer.innerHTML = rows;
+
+            // 2. العد التنازلي التمهيدي (3, 2, 1)
+            let nums = ["3", "2", "1"];
+            let i = 0;
+
+            function showIntro() {
+                if (i < nums.length) {
+                    document.getElementById("num").innerText = nums[i];
+                    i++;
+                    setTimeout(showIntro, 1000);
+                } else {
+                    document.getElementById("num").style.display = "none";
+                    document.getElementById("heart").style.display = "block";
+
+                    setTimeout(() => {
+                        document.getElementById("intro").style.display = "none";
+                        const mainScreen = document.getElementById("main");
+                        mainScreen.style.display = "flex";
+                        startBirthdayCountdown();
+                    }, 1500);
+                }
+            }
+
+            showIntro();
+
+            // 3. وظيفة حساب الوقت المتبقي لعيد الميلاد القادم
+            function startBirthdayCountdown() {
+                const targetDate = new Date("April 28, 2026 00:00:00").getTime();
+
+                setInterval(function() {
+                    const now = new Date().getTime();
+                    const distance = targetDate - now;
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    if (distance < 0) {
+                        document.getElementById("countdown").innerHTML = "إنه يوم ميلادك اليوم! 🎉";
+                    } else {
+                        document.getElementById("countdown").innerHTML = 
+                            `باقي على يوم ميلادك: <br> ${days} يوم و ${hours} ساعة و ${minutes} دقيقة و ${seconds} ثانية`;
+                    }
+                }, 1000);
+            }
+        };
+    </script>
+
+</body>
+</html>
+
